@@ -10,7 +10,7 @@ function Get-DateTaken($path) {
         
         $prop = $bmp.GetPropertyItem($exifTakenIndex)
         $date = [System.Text.Encoding]::ASCII.GetString($prop.Value)
-        [DateTime]::Parse($date.Substring(0,4)+"/"+$date.Substring(5,2)+"/"+$date.Substring(8))
+        [DateTime]::Parse($date.Substring(0,4) + "/" + $date.Substring(5,2) + "/" + $date.Substring(8))
     
     } else {
         [DateTime]::MinValue    
@@ -24,10 +24,10 @@ $defaultDestination = ($defaultSource + "Imported\")
 
 function Import-Images{
 [CmdletBinding()]
-Param(
+param(
     [string]$SourceDir = $defaultSource,
     [string]$DestinationDir = $defaultDestination,
-    [bool]$RemoveAfterImport = $true
+    [switch]$DontRemoveFilesAfterImport = $false
 )
 
     $fullDestinationDirPath = [System.IO.Path]::GetFullPath($DestinationDir)
@@ -57,12 +57,43 @@ Param(
 
         } while(Test-Path ($destinationFilePath))
 
-        if($RemoveAfterImport){
-            Move-Item $_.FullName $destinationFilePath
-        } else{
+        if($DontRemoveFilesAfterImport){
             Copy-Item $_.FullName $destinationFilePath
+        } else{
+            Move-Item $_.FullName $destinationFilePath
         }
     }
+<#
+.Synopsis
+    Imports images from the folder.
+.Description 
+    Imports images from the folder and store them into the taken date named subfolders.
+.Parameter SourceDir
+    Path to the directory the images will be imported from.
+.Parameter DestinationDir
+    Path to the directory the images will be imported to.
+.Parameter DontRemoveFilesAfterImport
+    Indicates that files should be copied (not moved) to the destination directory.
+.Example
+    # Import-Images
+
+    Description
+    -----------
+    Imports all images recursively from the current folder to the .\Imported subfolder.
+.Example
+    # Import-Images -SourceDir:"C:\Camera" -DestinationDir:"C:\MyPics"
+
+    Description
+    -----------
+    Imports all images recursively from the non-default folders.
+.Example
+    # Import-Images -DontRemoveFilesAfterImport
+
+    Description
+    -----------
+    Imports all images and doesn't remove them from the source directory.
+#>
 }
+
 Set-Alias ipimg Import-Images 
 Export-ModuleMember -Function Import-Images -Alias *

@@ -1,6 +1,6 @@
 # Images Importer
 
-Import images from the folder and store them into the taken date named folders.
+Imports images from the folder and store them into the taken date named subfolders.
 
 ## Examples
 
@@ -18,8 +18,7 @@ If source or destintion paths re different from the defaults, few params are als
 
 Images are removing from the sources folder by defult. In case if you want to keem them, use special param:
 
-	Import-Images -RemoveAfterImport:0
-
+	Import-Images -DontRemoveFilesAfterImport
 
 ## Credits
 
